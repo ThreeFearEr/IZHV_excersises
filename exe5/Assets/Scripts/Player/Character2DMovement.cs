@@ -187,32 +187,23 @@ public class Character2DMovement : MonoBehaviour
     /// </summary>
     void AnimateCharacter()
     {
-	    /*
-	     * Task #1a: Orienting the character
-	     *
-	     * Let us start by at least orienting the character, making him face the
-	     * correct way based on the desired direction of movement. Currently, when
-	     * walking left or right, the sprite is always looking the same.
-	     * 
-	     * To fix this, we need to orient the character properly. This can be done
-	     * in several ways, but the easiest is to modify the transform of the GO
-	     * based on its intended orientation.
-	     *
-	     * Let's presume that by default the character is heading right, represented
-	     * by the member variable *mHeadingRight* being true. You can detect direction
-	     * we are driving the character to go by examining the value of *mInput.move.x*.
-	     *
-	     * Now, modify the GO transform (hint: either scale or rotation will work) to
-	     * fix this problem.
-	     *
-	     * Helpful variables and methods:
-	     *   * Transform of the Game Object: *transform*
-	     *   * Scale and Rotation: *transform.localScale* and *transform.localRotation*
-	     *   * Input direction: *mInput.move.x*
-	     *   * Persistent heading flag: *mHeadingRight*
-	     *   * Rotating a local rotation by an axis: localRotation *= Quaternion.Euler(...)
-	     */
-	    
+	    if (mInput.move.x > 0 && !mHeadingRight)
+		{
+			// Flip to face right
+			mHeadingRight = true;
+			var localScale = transform.localScale;
+			localScale.x = Math.Abs(localScale.x); // Ensure positive x-scale
+			transform.localScale = localScale;
+		}
+		else if (mInput.move.x < 0 && mHeadingRight)
+		{
+			// Flip to face left
+			mHeadingRight = false;
+			var localScale = transform.localScale;
+			localScale.x = -Math.Abs(localScale.x); // Ensure negative x-scale
+			transform.localScale = localScale;
+		}
+
 	    var animator = mSelector.charAnimator;
 	    if (animator != null)
 	    {
@@ -227,44 +218,12 @@ public class Character2DMovement : MonoBehaviour
 			var jump = mInput.jump;
 			var falling = !mController.isGrounded && mFallTimeoutDelta <= 0.0f;
 
-			/*
-			 * Task #1a: Passing properties to the Animator
-			 * 
-			 * After rotating the character, he should now be able to look in the
-			 * correct direction, based on the movement. However, more detailed
-			 * animations are still missing.
-			 *
-			 * To fix this, you will need to pass the current state of the character
-			 * to the Animator. Each Animator in Unity has several properties which
-			 * can be programmatically set during runtime. These properties can be
-			 * used to drive the animation from this gameplay code.
-			 * 
-			 * In our case, we have following common properties:
-			 *   1) Speed (float) : Current movement speed of the character.
-			 *   2) MoveSpeed (float) : Target movement animation speed.
-			 *   3) Jump (bool) : Is the character jumping?
-			 *   4) Grounded (bool) : Is the character currently on the ground?
-			 *   5) Fall (bool) : Is the character falling?
-			 *   6) Crouch (bool) Is the character crouching?
-			 * These properties can be found in ani of the animation controllers
-			 * in the top-left "Parameters" tab.
-			 *
-			 * When you start the game and try performing any of the actions,
-			 * such as walking (WASD), jumping (<SPACE>), or crouching (<CTRL>),
-			 * the corresponding animation is not played.
-			 *
-			 * To fix this, we need to actually set the animator properties using
-			 * its methods. This way, the gameplay code triggers the corresponding
-			 * states within the Animator state machine.
-			 * 
-			 * The correct property values have been prepared above. After setting
-			 * the values, all of the animations should play correctly.
-			 *
-			 * Helpful variables and methods:
-			 *   * Property values prepared above
-			 *   * Current Animator instance: *animator*
-			 *   * Animator methods: *SetFloat* and *SetBool*
-			 */
+			animator.SetFloat("Speed", speed);
+			animator.SetFloat("MoveSpeed", moveSpeed);
+			animator.SetBool("Jump", jump);
+			animator.SetBool("Grounded", grounded);
+			animator.SetBool("Fall", falling);
+			animator.SetBool("Crouch", crouch);
 	    }
     }
 }
