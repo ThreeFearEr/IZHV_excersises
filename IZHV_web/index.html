@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>IZHV Exercises</title>
+</head>
+<body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script>
+function resizeFrame(frame) 
+{
+    let container = frame.contentWindow.document.getElementById("unity-container");
+    if (!container)
+    { container = frame.contentWindow.document.getElementById("content"); }
+
+    if (!container) { 
+		frame.style.width = "960px";
+		frame.style.height = "640px";
+	} else {
+		frame.style.width = container.clientWidth + "px";
+		frame.style.height = container.clientHeight + "px";
+	}
+}
+
+window.onload = () => {
+	const webLinkContainer = $("#webLink");
+	const webLink = webLinkContainer.children().first();
+	$.ajax({
+		url: "data/link.txt", 
+		success: (data) => {
+			if (!data)
+			{ data = "Missing Link!"; }
+			webLink.attr("href", data);
+			webLink.text(data);
+			webLink.css("visibility", "visible");
+		}, 
+		error: () => {
+			webLink.attr("href", "");
+			webLink.text("None");
+			webLink.css("visibility", "hidden");
+		}
+	});
+	
+    $("#izhvExerciseList").on("click", (e) => {
+        const contentFrame = $("#contentFrame");
+        contentFrame.attr("src", $(e.target).attr("path"));
+        resizeFrame(contentFrame[0]);
+		
+        const contentLinkContainer = $("#contentLink");
+        const contentLink = contentLinkContainer.children().first();
+        $.ajax({
+            url: $(e.target).attr("link-path"), 
+            success: (data) => {
+                if (!data)
+                { data = "Missing Link!"; }
+                contentLink.attr("href", data);
+                contentLink.text("Link: " + data);
+                contentLink.css("visibility", "visible");
+            }, 
+            error: () => {
+                contentLink.attr("href", "");
+                contentLink.text("Link: None");
+                contentLink.css("visibility", "hidden");
+            }
+        });
+    });
+}
+</script>
+
+<style>
+.navigation-container {
+	width: 1280px;
+}
+.content-container {
+	width: 1280px;
+}
+</style>
+
+<div class="container">
+<nav class="navbar navbar-light bg-light navigation-container">
+	<div class="container-fluid">
+		<div class="navbar-brand">IZHV Exercises <div id="webLink" style="visibility: hidden; display:inline"><a href="">None</a></div></div>
+    </div>
+</nav>
+
+
+<div class="jumbotron content-container">
+<div class="row">
+    <div class="col-2">
+        <div class="list-group" id="izhvExerciseList" role="tablist">
+            <a class="list-group-item list-group-item-action" id="exe1" data-toggle="list" path="data/exe1/index.html" link-path="data/exe1/link.txt" role="tab">Exercise 1</a>
+            <a class="list-group-item list-group-item-action" id="exe2" data-toggle="list" path="data/exe2/index.html" link-path="data/exe2/link.txt" role="tab">Exercise 2</a>
+            <a class="list-group-item list-group-item-action" id="exe3" data-toggle="list" path="data/exe3/index.html" link-path="data/exe3/link.txt" role="tab">Exercise 3</a>
+            <a class="list-group-item list-group-item-action" id="exe4" data-toggle="list" path="data/exe4/index.html" link-path="data/exe4/link.txt" role="tab">Exercise 4</a>
+            <a class="list-group-item list-group-item-action" id="exe5" data-toggle="list" path="data/exe5/index.html" link-path="data/exe5/link.txt" role="tab">Exercise 5</a>
+            <a class="list-group-item list-group-item-action" id="exe6" data-toggle="list" path="data/exe6/index.html" link-path="data/exe6/link.txt" role="tab">Exercise 6</a>
+            <a class="list-group-item list-group-item-action" id="exe7" data-toggle="list" path="data/exe7/index.html" link-path="data/exe7/link.txt" role="tab">Exercise 7</a>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="tab-content flex-grow" id="izhvExerciseContent">
+            <iframe id="contentFrame" mozallowfullscreen="true" allow="fullscreen" src="about:blank" style="border:0px #000000 none;" name="IZHV Exercise" scrolling="no" msallowfullscreen="true" allowfullscreen="true" webkitallowfullscreen="true" allowtransparency="true" frameborder="0" marginheight="px" onload="resizeFrame(this)"></iframe>
+            <div id="contentLink" style="visibility: hidden;">Link: <a href="">None</a></div>
+        </div>
+    </div>
+</div>
+</div>
+
+</body>
+</html>
